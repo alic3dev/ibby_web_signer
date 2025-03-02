@@ -24,4 +24,7 @@ export default tseslint.config(
     },
     files: ['src/**/*.ts'],
   },
+  {
+    ignores: ['build'],
+  },
 )

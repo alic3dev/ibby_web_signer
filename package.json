@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "ts-node src/index.ts",
+    "prod": "node build/index",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0 --ignore-pattern build",
     "clean": "rm -r build"
   },
