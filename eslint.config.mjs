@@ -1,7 +1,7 @@
 // @ts-check
 
-import eslint from "@eslint/js";
-import tseslint from "typescript-eslint";
+import eslint from '@eslint/js'
+import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   eslint.configs.recommended,
@@ -17,10 +17,11 @@ export default tseslint.config(
     //     tsconfigRootDir: import.meta.dirname,
     //   },
     // },
-    ignores: ["build"],
+    ignores: ['build'],
     rules: {
-      "@typescript-eslint/no-unused-vars": "warn",
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-inferrable-types': 'off',
     },
-    files: ["src/**/*.ts"],
-  }
-);
+    files: ['src/**/*.ts'],
+  },
+)
