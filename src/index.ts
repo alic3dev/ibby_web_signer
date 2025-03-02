@@ -47,10 +47,10 @@ async function main(): Promise<void> {
     private_key_passphrase: parameters.private_key_passphrase,
   })
 
-  const signedBuffer: Buffer = private_key.sign(parameters.message_to_sign)
+  const signed_buffer: Buffer = private_key.sign(parameters.message_to_sign)
 
-  process.stdout.write(`base64: ${signedBuffer.toString('base64')}\n`)
-  process.stdout.write(`hex: ${signedBuffer.toString('hex')}\n`)
+  process.stdout.write(`base64: ${signed_buffer.toString('base64')}\n`)
+  process.stdout.write(`hex: ${signed_buffer.toString('hex')}\n`)
 }
 
 main()
