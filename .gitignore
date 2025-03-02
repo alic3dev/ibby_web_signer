@@ -7,3 +7,4 @@ build
 # Dev
 *.pw
 *.pk
+*.env

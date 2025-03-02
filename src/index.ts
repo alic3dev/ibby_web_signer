@@ -1,70 +1,56 @@
-// import { timingSafeEqual } from 'crypto'
-import fs from 'fs/promises'
-import * as ssh from 'ssh2'
+import './module_require_resolution'
 
-function printUsage(): void {
-  console.log('Usage:')
-  console.log('\tibby-web-signer privateKey.pk "Message to sign"')
-  console.log('\t\t- OR -')
-  console.log(
-    '\tibby-web-signer privateKey.pk "PRIVATE_KEY_PASSPHRASE" "Message to sign"',
-  )
-}
+import type ssh from 'ssh2'
+
+import type { parameters_inferface } from '@/types'
+
+import fs from 'fs/promises'
+
+import { parameters_get, print_usage, private_key_parse } from '@/functions'
 
 async function main(): Promise<void> {
-  const inputFileLocation: string | undefined = process.argv[2]
+  const parameters: parameters_inferface = await parameters_get()
 
-  if (inputFileLocation === '' || typeof inputFileLocation === 'undefined') {
-    console.error('Missing input file location')
-    printUsage()
+  if (process.argv.length === 2) {
+    print_usage()
+    process.exit(0)
+  }
+
+  if (
+    parameters.message_to_sign === '' ||
+    typeof parameters.message_to_sign === 'undefined'
+  ) {
+    process.stderr.write('message_to_sign: missing\n')
+    print_usage(true)
     process.exit(1)
   }
 
-  const hasPassphrase: boolean = process.argv.length === 5
-
-  const messageToSign: string | undefined = process.argv[hasPassphrase ? 4 : 3]
-
-  if (messageToSign === '' || typeof messageToSign === 'undefined') {
-    console.error('Missing message to sign')
-    printUsage()
+  if (
+    parameters.private_key_path === '' ||
+    typeof parameters.private_key_path === 'undefined'
+  ) {
+    process.stderr.write('private_key_path: missing\n')
+    print_usage(true)
     process.exit(1)
   }
 
-  const inputFile: string = await fs.readFile(inputFileLocation, {
-    encoding: 'ascii',
+  const private_key_string: string = await fs.readFile(
+    parameters.private_key_path,
+    {
+      encoding: 'utf8',
+      flag: 'r',
+    },
+  )
+
+  const private_key: ssh.ParsedKey = await private_key_parse({
+    private_key_string,
+    private_key_passphrase: parameters.private_key_passphrase,
   })
 
-  let keyPass: string | undefined = hasPassphrase ? process.argv[3] : undefined
-  let privKey: ssh.ParsedKey | Error = ssh.utils.parseKey(inputFile, keyPass)
+  const signed_buffer: Buffer = private_key.sign(parameters.message_to_sign)
 
-  if (privKey instanceof Error) {
-    if (keyPass) {
-      try {
-        keyPass = await fs.readFile(keyPass, {
-          encoding: 'utf8',
-        })
-
-        keyPass = keyPass.trim()
-
-        privKey = ssh.utils.parseKey(inputFile, keyPass)
-      } catch {
-        /* Empty */
-      }
-    }
-
-    if (privKey instanceof Error) {
-      console.error('Unable to parse private key')
-      printUsage()
-      process.exit(1)
-    }
-  }
-
-  const signedBuffer: Buffer = privKey.sign(messageToSign)
-
-  console.log('Base64')
-  console.log(signedBuffer.toString('base64'))
-  console.log('Hex')
-  console.log(signedBuffer.toString('hex'))
+  process.stdout.write(`base64: ${signed_buffer.toString('base64')}\n`)
+  process.stdout.write(`hex: ${signed_buffer.toString('hex')}\n`)
 }
 
 main()
