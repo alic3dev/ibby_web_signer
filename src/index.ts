@@ -34,16 +34,29 @@ async function main(): Promise<void> {
     encoding: 'ascii',
   })
 
-  const keyPass: string | undefined = hasPassphrase
-    ? process.argv[3]
-    : undefined
-
-  const privKey: ssh.ParsedKey | Error = ssh.utils.parseKey(inputFile, keyPass)
+  let keyPass: string | undefined = hasPassphrase ? process.argv[3] : undefined
+  let privKey: ssh.ParsedKey | Error = ssh.utils.parseKey(inputFile, keyPass)
 
   if (privKey instanceof Error) {
-    console.error('Unable to parse private key')
-    printUsage()
-    process.exit(1)
+    if (keyPass) {
+      try {
+        keyPass = await fs.readFile(keyPass, {
+          encoding: 'utf8',
+        })
+
+        keyPass = keyPass.trim()
+
+        privKey = ssh.utils.parseKey(inputFile, keyPass)
+      } catch {
+        /* Empty */
+      }
+    }
+
+    if (privKey instanceof Error) {
+      console.error('Unable to parse private key')
+      printUsage()
+      process.exit(1)
+    }
   }
 
   const signedBuffer: Buffer = privKey.sign(messageToSign)
