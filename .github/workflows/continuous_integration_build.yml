@@ -1,27 +1,28 @@
 name: continuous_integration_build
 on:
   push:
-    branches: ['main']
+    branches: ['core']
   pull_request:
-    branches: ['main']
+    branches: ['core']
 jobs:
   continuous_integration_build:
     runs-on: ubuntu-latest
     env:
       node_version: current
     steps:
-      - name: repository_checkout
+      - name: continuous_integration:repository->checkout
         uses: actions/checkout@v4
-      - name: pnpm_setup
+      - name: continuous_integration:pnpm->setup
         uses: pnpm/action-setup@v4
-      - name: node_setup<${{ env.node_version }}>
+      - name: continuous_integration:node->setup<${{ env.node_version }}>
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node_version }}
           cache: 'pnpm'
-      - name: pnpm_install
-        run: pnpm i
-      - name: pnpm_lint
+      - name: continuous_integration:pnpm->install
+        run: pnpm i --frozen-lockfile
+      - name: continuous_integration:pnpm->lint
         run: pnpm lint
-      - name: pnpm_build
+      - name: continuous_integration:pnpm->build
         run: pnpm build
+
