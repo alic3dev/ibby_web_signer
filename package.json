@@ -1,6 +1,6 @@
 {
   "name": "ibby-web-signer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -14,12 +14,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^22.13.8",
+    "@eslint/js": "^9.23.0",
+    "@types/node": "^22.13.14",
     "@types/ssh2": "^1.15.4",
-    "eslint": "^9.21.0",
+    "eslint": "^9.23.0",
     "ssh2": "^1.16.0",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.25.0"
+    "typescript-eslint": "^8.28.0"
   },
-  "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee"
+  "packageManager": "pnpm@10.7.0+sha512.6b865ad4b62a1d9842b61d674a393903b871d9244954f652b8842c2b553c72176b278f64c463e52d40fff8aba385c235c8c9ecf5cc7de4fd78b8bb6d49633ab6"
 }
+
